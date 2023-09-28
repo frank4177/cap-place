@@ -6,10 +6,10 @@ import { request } from "../../config/config";
 
       try {
         const res = await request.post("/kk");
-        console.log(res);
+   
         return res;
       } catch (err) {
-        console.log(err)
+  
         return err;
       }
     }

@@ -71,7 +71,6 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
 
   // HANDLE REMOVE CHOICE
   const handleRemoveChoice = (index: number) => {
-    console.log(index);
     const list = [...choices];
     list.splice(index, 1);
     setChoices(list);
@@ -88,7 +87,7 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
   // HANDLE CHANGE FOR CHECKBOXES
   const handleCheckboxes = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    console.log(name);
+  
     const dat = { ...checkBoxData };
     dat[name] = checked;
     setCheckBoxData(dat);

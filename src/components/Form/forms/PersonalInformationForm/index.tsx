@@ -56,29 +56,9 @@ const PersonalInformationForm = () => {
         },
       ],
     });
+console.log(personalInformationData)
+ 
 
-  console.log(personalQtn);
-
-  // // GET INFO FROM SESSION STORAGE
-  // useEffect(() => {
-  //   const handleStorage = (e: any) => {
-  //     if (e?.type === "sessionStorageUpdated") {
-  //       const updatedData = sessionStorage.getItem("personalQuestion");
-  //       if (updatedData) {
-  //         const got = JSON.parse(updatedData);
-  //         setPersonalInfo(got);
-  //       } else {
-  //         console.log("to hell");
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("sessionStorageUpdated", handleStorage);
-  //   return () => {
-  //     window.removeEventListener("sessionStorageUpdated", handleStorage);
-  //   };
-  // }, []);
-
-  console.log(personalInformationData);
 
   // HANDLE INPUT FIELDS
   const handleChange = (
