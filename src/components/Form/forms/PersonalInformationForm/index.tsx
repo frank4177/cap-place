@@ -6,55 +6,85 @@ import { plus } from "../../../Icons";
 import { optionData } from "../../../../utils/contants/data";
 import CheckBox from "../../formElement/checkBox";
 import Switch from "../../formElement/Switch";
-
+import { IpersonalQuestionsdata, UserInformation } from "../../../../types";
+import ViewAddedQuestion from "../ViewAddedQuestion";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../../services/redux/store";
 
 
 const PersonalInformationForm = () => {
-  const [personalInformationData, setPersonalInformationData] = useState<any>({
-    firstName: "",
-    lastName: "",
-    emailId: "",
-    phoneNumber: {
-      internalUse: false,
-      show: true,
-    },
-    nationality: {
-      internalUse: false,
-      show: true,
-    },
-    currentResidence: {
-      internalUse: false,
-      show: true,
-    },
-    idNumber: {
-      internalUse: false,
-      show: true,
-    },
-    dateOfBirth: {
-      internalUse: false,
-      show: true,
-    },
-    gender: {
-      internalUse: false,
-      show: true,
-    },
-    personalQuestions: [
-      {
-        id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-        type: "Paragraph",
-        question: "string",
-        choices: ["string"],
-        maxChoice: 0,
-        disqualify: false,
-        other: false,
+  const personalQtn = useSelector((state: RootState) => state?.apiJson?.value)
+  const [isAddquestionMode, setIsAddquestionMode] = useState<boolean>(false);
+  const [personalInformationData, setPersonalInformationData] =
+    useState<UserInformation>({
+      firstName: "",
+      lastName: "",
+      emailId: "",
+      phoneNumber: {
+        internalUse: false,
+        show: true,
       },
-    ],
-  });
+      nationality: {
+        internalUse: false,
+        show: true,
+      },
+      currentResidence: {
+        internalUse: false,
+        show: true,
+      },
+      idNumber: {
+        internalUse: false,
+        show: true,
+      },
+      dateOfBirth: {
+        internalUse: false,
+        show: true,
+      },
+      gender: {
+        internalUse: false,
+        show: true,
+      },
+      personalQuestions: [
+        {
+          id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+          type: "Paragraph",
+          question: "string",
+          choices: ["string"],
+          maxChoice: 0,
+          disqualify: false,
+          other: false,
+        },
+      ],
+    });
+
+  console.log(personalQtn);
+
+  // // GET INFO FROM SESSION STORAGE
+  // useEffect(() => {
+  //   const handleStorage = (e: any) => {
+  //     if (e?.type === "sessionStorageUpdated") {
+  //       const updatedData = sessionStorage.getItem("personalQuestion");
+  //       if (updatedData) {
+  //         const got = JSON.parse(updatedData);
+  //         setPersonalInfo(got);
+  //       } else {
+  //         console.log("to hell");
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("sessionStorageUpdated", handleStorage);
+  //   return () => {
+  //     window.removeEventListener("sessionStorageUpdated", handleStorage);
+  //   };
+  // }, []);
 
   console.log(personalInformationData);
 
   // HANDLE INPUT FIELDS
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, label?: string) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    label?: string
+  ) => {
     const { name, value, type, checked } = event.target;
     setPersonalInformationData((prevData: any) => {
       if (type === "checkbox" && label === "Internal") {
@@ -73,7 +103,7 @@ const PersonalInformationForm = () => {
             show: checked,
           },
         };
-      }else {
+      } else {
         return {
           ...prevData,
           [name]: value,
@@ -84,7 +114,7 @@ const PersonalInformationForm = () => {
 
   // // HANDLE PERSONAL QUESTION
   //   const handlePersonalQuestion = () => {
-  
+
   //   };
 
   return (
@@ -115,10 +145,9 @@ const PersonalInformationForm = () => {
             />
             <hr />
 
-
             {/* CHECK BOX AND SWITCH FIELD */}
             {optionData.map((item) => (
-              <div key={item.name}>
+              <div key={item.name} className="mb-6">
                 <div className="flex flex-row justify-between items-center h-[50px]">
                   <p className="text-[14px] font-bold">
                     {item?.title}{" "}
@@ -127,8 +156,12 @@ const PersonalInformationForm = () => {
                     </span>
                   </p>
                   <div className="max-w-[200px] w-full flex flex-row justify-between items-center">
-                    <CheckBox label={item?.label} item={item} handleChange={handleChange}/>
-                    <Switch item={item} handleChange={handleChange}/>
+                    <CheckBox
+                      label={item?.label}
+                      item={item}
+                      handleChange={handleChange}
+                    />
+                    <Switch item={item} handleChange={handleChange} />
                   </div>
                 </div>
                 <hr />
@@ -136,12 +169,25 @@ const PersonalInformationForm = () => {
             ))}
 
             {/* ADD QUESTION BUTTON */}
-            <div className="flex flex-row items-center gap-3 cursor-pointer w-fit my-5">
-              <img src={plus} alt="plus icon" className="h-5 w-5" />
-              <span className="text-[14px]">Add a question</span>
-            </div>
+            {!isAddquestionMode ? (
+              <div
+                className="flex flex-row items-center gap-3 cursor-pointer w-fit my-5"
+                onClick={() => setIsAddquestionMode(true)}
+              >
+                <img src={plus} alt="plus icon" className="h-5 w-5" />
+                <span className="text-[14px]">Add a question</span>
+              </div>
+            ) : null}
 
-            <AddQuestion />
+            {isAddquestionMode ? (
+              <AddQuestion setIsAddquestionMode={setIsAddquestionMode} />
+            ) : null}
+
+            <div className="flex flex-col">
+              {personalQtn?.map((item: IpersonalQuestionsdata, index: number) => (
+                <ViewAddedQuestion item={item} key={index}/>
+              ))}
+            </div>
           </FormWrapper>
         </div>
       </div>

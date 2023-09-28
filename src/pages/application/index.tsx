@@ -61,9 +61,12 @@ const ApplicationPage = () => {
           <div className="flex flex-col justify-center h-[220px]">
             <StageTracker />
           </div>
+          <div className="flex flex-col gap-20 px-10">
           <UploadCoverImageForm />
           <PersonalInformationForm />
           <ProfileForm />
+          </div>
+         
         </div>
       </Layout>
     </>
