@@ -1,13 +1,14 @@
 
 interface IbuttonProp{
-  handleClick?: ()=> void
+  handleClick?: ()=> void;
+  title?: string
 }
 
-const Button = ({handleClick} :IbuttonProp) => {
+const Button = ({handleClick, title} :IbuttonProp) => {
   return (
     <>
     <button className='bg-bgGreen h-[30px] w-[50px] text-[13px] text-white rounded-[2px]' onClick={()=> handleClick?.()}>
-        Save
+        {title ? title : "Save"}
     </button>
     </>
   )

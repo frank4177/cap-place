@@ -10,70 +10,86 @@ export type selectOptionType = {
   title: string;
 };
 
-type PersonalQuestion = {
-  id: string;
-  type: string;
-  question: string;
-  choices: string[];
-  maxChoice: number;
-  disqualify: boolean;
-  other: boolean;
-};
-
-export type UserInformation = {
-  firstName: string;
-  lastName: string;
-  emailId: string;
-  phoneNumber: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  nationality: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  currentResidence: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  idNumber: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  dateOfBirth: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  gender: {
-    internalUse: boolean;
-    show: boolean;
-  };
-  personalQuestions: PersonalQuestion[];
-};
-
-export type ProfileInformation = {
-  education: {
-    mandatory: boolean,
-    show: boolean,
-  },
-  experience: {
-    mandatory: boolean,
-    show: boolean,
-  },
-  resume: {
-    mandatory: boolean,
-    show: boolean,
-  },
-  personalQuestions: PersonalQuestion[];
-};
 
 export interface IpersonalQuestionsdata {
-  id?: number;
+  id?: string;
   type?: string;
-  question?: string;
-  maxChoice?: number;
-  disqualify?: boolean;
-  other?: boolean;
-  choices?: string[]
+  question?: string | undefined;
+  choices?: string[];
+  maxChoice?: number | undefined;
+  disqualify?: boolean | undefined;
+  other?: boolean | undefined;
   [key: string]: any;
 }
+
+export type UserInformation = {
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  emailId?: string | undefined;
+  phoneNumber?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  nationality?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  currentResidence?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  idNumber?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  dateOfBirth?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  gender?: {
+    internalUse: boolean;
+    show: boolean;
+  } | undefined;
+  personalQuestions?: IpersonalQuestionsdata[] | undefined;
+};
+
+
+export type ProfileInformation = {
+  education?: {
+    mandatory: boolean;
+    show: boolean;
+  } | undefined;
+  experience?: {
+    mandatory: boolean,
+    show: boolean,
+  } | undefined;
+  resume?: {
+    mandatory: boolean,
+    show: boolean,
+  } | undefined;
+  profileQuestions?: IpersonalQuestionsdata[] | undefined;
+};
+
+export type CustomQuestions ={
+    id: string;
+    type: string;
+    question: string;
+    choices: string[];
+    maxChoice: number;
+    disqualify: boolean;
+    other: boolean;
+  
+}
+
+export type ApplicationForm = {
+  data?: {
+    id?: string;
+    type: string;
+    attributes: {
+      coverImage: string | undefined;
+      personalInformation: UserInformation;
+      profile: ProfileInformation;
+      customisedQuestions:CustomQuestions[] ;
+    };
+  };
+};

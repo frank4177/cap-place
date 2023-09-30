@@ -1,12 +1,19 @@
 import { FormWrapper } from "../../../Layout/FromWrapper";
 import FileUpload from "../../formElement/fileUpload";
 
-const UploadCoverImageForm = () => {
+interface props{
+  image?: string | undefined
+  setImage?:React.Dispatch<React.SetStateAction<string | undefined>>
+}
+
+const UploadCoverImageForm = ({ setImage}: props) => {
+
+
   return (
     <>
       <div>
         <FormWrapper title="Upload cover image">
-          <FileUpload />
+          <FileUpload setImage={setImage}/>
         </FormWrapper>
       </div>
     </>

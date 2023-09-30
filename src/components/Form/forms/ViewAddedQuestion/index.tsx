@@ -4,14 +4,14 @@ import { edit } from "../../../Icons";
 interface viewProp{
     item?: IpersonalQuestionsdata
     setIsEditquestionMode?: React.Dispatch<React.SetStateAction<boolean>>;
-    setQuestionID?: React.Dispatch<React.SetStateAction<number | undefined>>
-    questionID?: number
+    setQuestionID?: React.Dispatch<React.SetStateAction<string | undefined>>
+    questionID?: string | undefined
 }
 
 
 const ViewAddedQuestion = ({item, setIsEditquestionMode, setQuestionID, questionID}: viewProp) => {
 
-  const handleEdit = (param: number | undefined)=>{
+  const handleEdit = (param: string | undefined)=>{
     setIsEditquestionMode?.(true)
     setQuestionID?.(param)
   }

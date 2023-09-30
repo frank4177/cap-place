@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { close, upload } from "../../../Icons";
 
-const FileUpload = () => {
+interface props{
+  setImage?:React.Dispatch<React.SetStateAction<string | undefined>>
+}
+
+const FileUpload = ({ setImage}: props) => {
   const [preview, setPreview] = useState<any>();
   // const [file, setFile] = useState<File | undefined>(undefined);
   // const [error, setError] = useState<boolean>(false);
+
+  console.log(preview)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target?.files?.[0];
@@ -13,6 +19,7 @@ const FileUpload = () => {
       let reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        setImage?.(`${reader.result}`)
       };
       reader.readAsDataURL(selected);
       // setFile(selected);

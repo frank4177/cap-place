@@ -13,7 +13,13 @@ import {
 } from "../../../../types";
 import ViewAddedQuestion from "../ViewAddedQuestion";
 
-const PersonalInformationForm = () => {
+
+interface props{
+  personalInformationData?: UserInformation | undefined
+  setPersonalInformationData?: React.Dispatch<React.SetStateAction<UserInformation>> | undefined
+}
+
+const PersonalInformationForm = ({personalInformationData, setPersonalInformationData} :props) => {
   const [choices, setChoices] = useState([""]);
   const [error, setError] = useState<string>("");
   const [selectedQuestionType, setselectedQuestionType] =
@@ -29,52 +35,10 @@ const PersonalInformationForm = () => {
 
   const [isAddquestionMode, setIsAddquestionMode] = useState<boolean>(false);
   const [isEditquestionMode, setIsEditquestionMode] = useState<boolean>(false);
-  const [perso, setPerso] = useState<undefined | IpersonalQuestionsdata[]>([]);
-  const [questionID, setQuestionID] = useState<number>();
-  const [personalInformationData, setPersonalInformationData] =
-    useState<UserInformation>({
-      firstName: "",
-      lastName: "",
-      emailId: "",
-      phoneNumber: {
-        internalUse: false,
-        show: true,
-      },
-      nationality: {
-        internalUse: false,
-        show: true,
-      },
-      currentResidence: {
-        internalUse: false,
-        show: true,
-      },
-      idNumber: {
-        internalUse: false,
-        show: true,
-      },
-      dateOfBirth: {
-        internalUse: false,
-        show: true,
-      },
-      gender: {
-        internalUse: false,
-        show: true,
-      },
-      personalQuestions: [
-        {
-          id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-          type: "Paragraph",
-          question: "string",
-          choices: ["string"],
-          maxChoice: 0,
-          disqualify: false,
-          other: false,
-        },
-      ],
-    });
+  const [questionID, setQuestionID] = useState<string | undefined>();
 
-  console.log(personalInformationData);
 
+  console.log("hyyy:", personalInformationData);
 
   // HANDLE SWITCH AND CHECKBOXES
   const handleChange = (
@@ -82,7 +46,7 @@ const PersonalInformationForm = () => {
     label?: string
   ) => {
     const { name, value, type, checked } = event.target;
-    setPersonalInformationData((prevData: any) => {
+    setPersonalInformationData?.((prevData: any) => {
       if (type === "checkbox" && label === "Internal") {
         return {
           ...prevData,
@@ -114,6 +78,14 @@ const PersonalInformationForm = () => {
     setInputData({ question: "", maxChoice: 0 });
     setCheckBoxData({ disqualify: false, other: false });
     setChoices([""]);
+  };
+
+  const handleAddQuestion = () => {
+    setselectedQuestionType(Object);
+    setInputData({ question: "", maxChoice: 0 });
+    setCheckBoxData({ disqualify: false, other: false });
+    setChoices([""]);
+    setIsAddquestionMode(true);
   };
 
   // HANDLE CHANGE FOR CHOICES
@@ -160,35 +132,42 @@ const PersonalInformationForm = () => {
   // HANDLE SAVE DATA
   const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (selectedQuestionType) {
+      // IF NOT IN EDIT MODE, SAVE(PUSH TO ARRAY)
+
       if (!isEditquestionMode) {
-        const lo = (current: any) => [
-          ...current,
-          {
-            id: Math.random(),
+        const data = { ...personalInformationData };
+        const id = Math.random()
+
+          const add:IpersonalQuestionsdata = {
+            id: `${id}`,
             type: selectedQuestionType?.title,
             question: inputdata?.question,
             choices: choices,
             maxChoice: inputdata?.maxChoice,
             disqualify: checkBoxData?.disqualify,
             other: checkBoxData?.other,
-          },
-        ];
+          } 
 
+          personalInformationData?.personalQuestions?.push(add);
+        
+        setPersonalInformationData?.(data);
+
+        // Delay and hide form
         setTimeout(() => {
           setIsAddquestionMode?.(false);
         }, 50);
-
-        setPerso?.(lo);
       } else {
-        // setError("please select a question")
-        setPerso?.(
-          perso?.map((item: IpersonalQuestionsdata) => {
+        // ELSE IF IN EDIT MODE EDIT
+        const data = { ...personalInformationData };
+        const id = Math.random()
+
+       const lo = personalInformationData?.personalQuestions?.map(
+          (item: IpersonalQuestionsdata) => {
             return item.id === questionID
               ? {
                   ...item,
-                  id: Math.random(),
+                  id: `${id}`,
                   type: selectedQuestionType?.title,
                   question: inputdata?.question,
                   choices: choices,
@@ -197,12 +176,17 @@ const PersonalInformationForm = () => {
                   other: checkBoxData?.other,
                 }
               : item;
-          })
+          }
         );
+
+        data["personalQuestions"] = lo
+        
+        setPersonalInformationData?.(data);
+
+        // Delay and hide form
         setTimeout(() => {
           setIsEditquestionMode?.(false);
         }, 50);
-        // setselectedQuestionType(Object)
       }
     } else {
       setError("Please select question type and other fields");
@@ -211,14 +195,19 @@ const PersonalInformationForm = () => {
 
   const handleDeleteQesution = () => {
     if (!isEditquestionMode) {
+      // IF NOT IN EDIT MODE, CLOSE FORM
       setIsAddquestionMode?.(false);
     } else {
-      // setIsEditquestionMode?.(false)
-      const findid = perso?.filter((item: any) => {
-        return item.id !== questionID;
-      });
-      setPerso?.(findid);
-      setQuestionID?.(0);
+      // ELSE IF IN EDIT MODE, DELETE
+      const data = { ...personalInformationData };
+      const deleteInfo = personalInformationData?.personalQuestions?.filter(
+        (item: any) => {
+          return item.id !== questionID;
+        }
+      );
+      data["personalQuestions"] = deleteInfo;
+      setPersonalInformationData?.(data);
+      setQuestionID?.("");
     }
   };
 
@@ -277,7 +266,7 @@ const PersonalInformationForm = () => {
             {!isAddquestionMode ? (
               <div
                 className="flex flex-row items-center gap-3 cursor-pointer w-fit my-5"
-                onClick={() => setIsAddquestionMode(true)}
+                onClick={() => handleAddQuestion()}
               >
                 <img src={plus} alt="plus icon" className="h-5 w-5" />
                 <span className="text-[14px]">Add a question</span>
@@ -286,47 +275,51 @@ const PersonalInformationForm = () => {
 
             {isAddquestionMode ? (
               <AddQuestion
-              choices={choices}
-              error={error}
-              checkBoxData={checkBoxData}
-              handleSelectChange={handleSelectChange}
-              handleChoiceChange={handleChoiceChange}
-              handleAddChoice={handleAddChoice}
-              handleRemoveChoice={handleRemoveChoice}
-              handleInputs={handleInputs}
-              handleCheckboxes={handleCheckboxes}
-              handleSave={handleSave}
-              handleDeleteQesution={handleDeleteQesution}
+                choices={choices}
+                selectedQuestionType={selectedQuestionType}
+                error={error}
+                checkBoxData={checkBoxData}
+                handleSelectChange={handleSelectChange}
+                handleChoiceChange={handleChoiceChange}
+                handleAddChoice={handleAddChoice}
+                handleRemoveChoice={handleRemoveChoice}
+                handleInputs={handleInputs}
+                handleCheckboxes={handleCheckboxes}
+                handleSave={handleSave}
+                handleDeleteQesution={handleDeleteQesution}
               />
             ) : null}
 
             <div className="flex flex-col">
-              {perso?.map((item: IpersonalQuestionsdata, index: number) => (
-                <div key={index}>
-                  <ViewAddedQuestion
-                    item={item}
-                    key={index}
-                    setIsEditquestionMode={setIsEditquestionMode}
-                    setQuestionID={setQuestionID}
-                    questionID={questionID}
-                  />
-                  {questionID === item.id ? (
-                    <AddQuestion
-                    choices={choices}
-                    error={error}
-                    checkBoxData={checkBoxData}
-                    handleSelectChange={handleSelectChange}
-                    handleChoiceChange={handleChoiceChange}
-                    handleAddChoice={handleAddChoice}
-                    handleRemoveChoice={handleRemoveChoice}
-                    handleInputs={handleInputs}
-                    handleCheckboxes={handleCheckboxes}
-                    handleSave={handleSave}
-                    handleDeleteQesution={handleDeleteQesution}
+              {personalInformationData?.personalQuestions?.map(
+                (item: IpersonalQuestionsdata, index: number) => (
+                  <div key={index}>
+                    <ViewAddedQuestion
+                      item={item}
+                      key={index}
+                      setIsEditquestionMode={setIsEditquestionMode}
+                      setQuestionID={setQuestionID}
+                      questionID={questionID}
                     />
-                  ) : null}
-                </div>
-              ))}
+                    {questionID === item.id ? (
+                      <AddQuestion
+                        choices={choices}
+                        selectedQuestionType={selectedQuestionType}
+                        error={error}
+                        checkBoxData={checkBoxData}
+                        handleSelectChange={handleSelectChange}
+                        handleChoiceChange={handleChoiceChange}
+                        handleAddChoice={handleAddChoice}
+                        handleRemoveChoice={handleRemoveChoice}
+                        handleInputs={handleInputs}
+                        handleCheckboxes={handleCheckboxes}
+                        handleSave={handleSave}
+                        handleDeleteQesution={handleDeleteQesution}
+                      />
+                    ) : null}
+                  </div>
+                )
+              )}
             </div>
           </FormWrapper>
         </div>

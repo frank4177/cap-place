@@ -53,7 +53,6 @@ const AddQuestion = ({
   handleDeleteQesution
 }: questionProp) => {
 
-
   return (
     <>
       <FormWrapper title="Questions">

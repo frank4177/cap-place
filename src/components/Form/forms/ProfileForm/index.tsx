@@ -8,7 +8,12 @@ import { useState } from "react";
 import { IpersonalQuestionsdata, ProfileInformation, selectOptionType } from "../../../../types";
 import ViewAddedQuestion from "../ViewAddedQuestion";
 
-const ProfileForm = () => {
+interface props{
+  profile?: ProfileInformation | undefined
+  setprofile?: React.Dispatch<React.SetStateAction<ProfileInformation>> | undefined
+}
+
+const ProfileForm = ({profile, setprofile} :props) => {
   const [choices, setChoices] = useState([""]);
   const [error, setError] = useState<string>("");
   const [selectedQuestionType, setselectedQuestionType] =
@@ -24,35 +29,9 @@ const ProfileForm = () => {
 
   const [isAddquestionMode, setIsAddquestionMode] = useState<boolean>(false);
   const [isEditquestionMode, setIsEditquestionMode] = useState<boolean>(false);
-  const [perso, setPerso] = useState<undefined | IpersonalQuestionsdata[]>([]);
-  const [questionID, setQuestionID] = useState<number>();
-  const [profile, setprofile] = useState<ProfileInformation>({
-    education: {
-      mandatory: false,
-      show: false,
-    },
-    experience: {
-      mandatory: false,
-      show: false,
-    },
-    resume: {
-      mandatory: false,
-      show: false,
-    },
-    personalQuestions: [
-      {
-        id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-        type: "Paragraph",
-        question: "string",
-        choices: ["string"],
-        maxChoice: 0,
-        disqualify: false,
-        other: false,
-      },
-    ],
-  });
+  const [questionID, setQuestionID] = useState<string>();
 
-  console.log(profile);
+ 
 
   // HANDLE INPUT FIELDS
   const handleChange = (
@@ -60,7 +39,7 @@ const ProfileForm = () => {
     label?: string
   ) => {
     const { name, value, type, checked } = event.target;
-    setprofile((prevData: any) => {
+    setprofile?.((prevData: any) => {
       if (type === "checkbox" && label === "Mandatory") {
         return {
           ...prevData,
@@ -135,70 +114,87 @@ const ProfileForm = () => {
     setCheckBoxData(dat);
   };
 
-  // HANDLE SAVE DATA
-  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+ // HANDLE SAVE DATA
+ const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  if (selectedQuestionType) {
+    // IF NOT IN EDIT MODE, SAVE(PUSH TO ARRAY)
 
-    if (selectedQuestionType) {
-      if (!isEditquestionMode) {
-        const lo = (current: any) => [
-          ...current,
-          {
-            id: Math.random(),
-            type: selectedQuestionType?.title,
-            question: inputdata?.question,
-            choices: choices,
-            maxChoice: inputdata?.maxChoice,
-            disqualify: checkBoxData?.disqualify,
-            other: checkBoxData?.other,
-          },
-        ];
-
-        setTimeout(() => {
-          setIsAddquestionMode?.(false);
-        }, 50);
-
-        setPerso?.(lo);
-      } else {
-        // setError("please select a question")
-        setPerso?.(
-          perso?.map((item: IpersonalQuestionsdata) => {
-            return item.id === questionID
-              ? {
-                  ...item,
-                  id: Math.random(),
-                  type: selectedQuestionType?.title,
-                  question: inputdata?.question,
-                  choices: choices,
-                  maxChoice: inputdata?.maxChoice,
-                  disqualify: checkBoxData?.disqualify,
-                  other: checkBoxData?.other,
-                }
-              : item;
-          })
-        );
-        setTimeout(() => {
-          setIsEditquestionMode?.(false);
-        }, 50);
-        // setselectedQuestionType(Object)
-      }
-    } else {
-      setError("Please select question type and other fields");
-    }
-  };
-
-  const handleDeleteQesution = () => {
     if (!isEditquestionMode) {
-      setIsAddquestionMode?.(false);
+      const data = { ...profile };
+      const id = Math.random()
+
+        const add:IpersonalQuestionsdata = {
+          id: `${id}`,
+          type: selectedQuestionType?.title,
+          question: inputdata?.question,
+          choices: choices,
+          maxChoice: inputdata?.maxChoice,
+          disqualify: checkBoxData?.disqualify,
+          other: checkBoxData?.other,
+        } 
+
+        profile?.profileQuestions?.push(add);
+      
+      setprofile?.(data);
+
+      // Delay and hide form
+      setTimeout(() => {
+        setIsAddquestionMode?.(false);
+      }, 50);
     } else {
-      // setIsEditquestionMode?.(false)
-      const findid = perso?.filter((item: any) => {
-        return item.id !== questionID;
-      });
-      setPerso?.(findid);
-      setQuestionID?.(0);
+      // ELSE IF IN EDIT MODE EDIT
+      const data = { ...profile };
+      const id = Math.random()
+
+     const lo = profile?.profileQuestions?.map(
+        (item: IpersonalQuestionsdata) => {
+          return item.id === questionID
+            ? {
+                ...item,
+                id: `${id}`,
+                type: selectedQuestionType?.title,
+                question: inputdata?.question,
+                choices: choices,
+                maxChoice: inputdata?.maxChoice,
+                disqualify: checkBoxData?.disqualify,
+                other: checkBoxData?.other,
+              }
+            : item;
+        }
+      );
+
+      data["profileQuestions"] = lo
+      
+      setprofile?.(data);
+
+      // Delay and hide form
+      setTimeout(() => {
+        setIsEditquestionMode?.(false);
+      }, 50);
     }
-  };
+  } else {
+    setError("Please select question type and other fields");
+  }
+};
+
+const handleDeleteQesution = () => {
+  if (!isEditquestionMode) {
+    // IF NOT IN EDIT MODE, CLOSE FORM
+    setIsAddquestionMode?.(false);
+  } else {
+    // ELSE IF IN EDIT MODE, DELETE
+    const data = { ...profile };
+    const deleteInfo = profile?.profileQuestions?.filter(
+      (item: any) => {
+        return item.id !== questionID;
+      }
+    );
+    data["profileQuestions"] = deleteInfo;
+    setprofile?.(data);
+    setQuestionID?.("");
+  }
+};
 
   return (
     <>
@@ -238,22 +234,23 @@ const ProfileForm = () => {
 
         {isAddquestionMode ? (
           <AddQuestion
-            choices={choices}
-            error={error}
-            checkBoxData={checkBoxData}
-            handleSelectChange={handleSelectChange}
-            handleChoiceChange={handleChoiceChange}
-            handleAddChoice={handleAddChoice}
-            handleRemoveChoice={handleRemoveChoice}
-            handleInputs={handleInputs}
-            handleCheckboxes={handleCheckboxes}
-            handleSave={handleSave}
-            handleDeleteQesution={handleDeleteQesution}
+          choices={choices}
+          selectedQuestionType={selectedQuestionType}
+          error={error}
+          checkBoxData={checkBoxData}
+          handleSelectChange={handleSelectChange}
+          handleChoiceChange={handleChoiceChange}
+          handleAddChoice={handleAddChoice}
+          handleRemoveChoice={handleRemoveChoice}
+          handleInputs={handleInputs}
+          handleCheckboxes={handleCheckboxes}
+          handleSave={handleSave}
+          handleDeleteQesution={handleDeleteQesution}
           />
         ) : null}
 
         <div className="flex flex-col">
-          {perso?.map((item: IpersonalQuestionsdata, index: number) => (
+          {profile?.profileQuestions?.map((item: IpersonalQuestionsdata, index: number) => (
             <div key={index}>
               <ViewAddedQuestion
                 item={item}
@@ -265,6 +262,7 @@ const ProfileForm = () => {
               {questionID === item.id ? (
                 <AddQuestion
                 choices={choices}
+                selectedQuestionType={selectedQuestionType}
                 error={error}
                 checkBoxData={checkBoxData}
                 handleSelectChange={handleSelectChange}
