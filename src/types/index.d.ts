@@ -51,6 +51,22 @@ export type UserInformation = {
   personalQuestions: PersonalQuestion[];
 };
 
+export type ProfileInformation = {
+  education: {
+    mandatory: boolean,
+    show: boolean,
+  },
+  experience: {
+    mandatory: boolean,
+    show: boolean,
+  },
+  resume: {
+    mandatory: boolean,
+    show: boolean,
+  },
+  personalQuestions: PersonalQuestion[];
+};
+
 export interface IpersonalQuestionsdata {
   id?: number;
   type?: string;

@@ -6,11 +6,27 @@ import { plus } from "../../../Icons";
 import { optionData } from "../../../../utils/contants/data";
 import CheckBox from "../../formElement/checkBox";
 import Switch from "../../formElement/Switch";
-import { IpersonalQuestionsdata, UserInformation } from "../../../../types";
+import {
+  IpersonalQuestionsdata,
+  UserInformation,
+  selectOptionType,
+} from "../../../../types";
 import ViewAddedQuestion from "../ViewAddedQuestion";
 
 const PersonalInformationForm = () => {
-  // const personalQtn = useSelector((state: RootState) => state?.apiJson?.value);
+  const [choices, setChoices] = useState([""]);
+  const [error, setError] = useState<string>("");
+  const [selectedQuestionType, setselectedQuestionType] =
+    useState<selectOptionType>();
+  const [inputdata, setInputData] = useState<IpersonalQuestionsdata>({
+    question: "",
+    maxChoice: 0,
+  });
+  const [checkBoxData, setCheckBoxData] = useState<IpersonalQuestionsdata>({
+    disqualify: false,
+    other: false,
+  });
+
   const [isAddquestionMode, setIsAddquestionMode] = useState<boolean>(false);
   const [isEditquestionMode, setIsEditquestionMode] = useState<boolean>(false);
   const [perso, setPerso] = useState<undefined | IpersonalQuestionsdata[]>([]);
@@ -59,28 +75,8 @@ const PersonalInformationForm = () => {
 
   console.log(personalInformationData);
 
-  // // GET INFO FROM SESSION STORAGE
-  // useEffect(() => {
-  //   const handleStorage = (e: any) => {
-  //     if (e?.type === "sessionStorageUpdated") {
-  //       const updatedData = sessionStorage.getItem("personalQuestion");
-  //       if (updatedData) {
-  //         const got = JSON.parse(updatedData);
-  //         setPersonalInfo(got);
-  //       } else {
-  //         console.log("to hell");
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("sessionStorageUpdated", handleStorage);
-  //   return () => {
-  //     window.removeEventListener("sessionStorageUpdated", handleStorage);
-  //   };
-  // }, []);
 
-  console.log(perso);
-
-  // HANDLE INPUT FIELDS
+  // HANDLE SWITCH AND CHECKBOXES
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     label?: string
@@ -110,6 +106,120 @@ const PersonalInformationForm = () => {
         };
       }
     });
+  };
+
+  // HANDLE CHANGE FOR SELECT QUESTION
+  const handleSelectChange = (param: selectOptionType) => {
+    setselectedQuestionType(param);
+    setInputData({ question: "", maxChoice: 0 });
+    setCheckBoxData({ disqualify: false, other: false });
+    setChoices([""]);
+  };
+
+  // HANDLE CHANGE FOR CHOICES
+  const handleChoiceChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { value } = e.target;
+    const list = [...choices];
+    list[index] = value;
+    setChoices(list);
+  };
+
+  // HANDLE ADD CHOICES
+  const handleAddChoice = () => {
+    setChoices((current) => [...current, ""]);
+  };
+
+  // HANDLE REMOVE CHOICE
+  const handleRemoveChoice = (index: number) => {
+    console.log(index);
+    const list = [...choices];
+    list.splice(index, 1);
+    setChoices(list);
+  };
+
+  // HANDLE CHANGE FOR INPUT FIELDS
+  const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dat = { ...inputdata };
+    const { name, value } = e.target;
+    dat[name] = value;
+    setInputData(dat);
+  };
+
+  // HANDLE CHANGE FOR CHECKBOXES
+  const handleCheckboxes = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    console.log(name);
+    const dat = { ...checkBoxData };
+    dat[name] = checked;
+    setCheckBoxData(dat);
+  };
+
+  // HANDLE SAVE DATA
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (selectedQuestionType) {
+      if (!isEditquestionMode) {
+        const lo = (current: any) => [
+          ...current,
+          {
+            id: Math.random(),
+            type: selectedQuestionType?.title,
+            question: inputdata?.question,
+            choices: choices,
+            maxChoice: inputdata?.maxChoice,
+            disqualify: checkBoxData?.disqualify,
+            other: checkBoxData?.other,
+          },
+        ];
+
+        setTimeout(() => {
+          setIsAddquestionMode?.(false);
+        }, 50);
+
+        setPerso?.(lo);
+      } else {
+        // setError("please select a question")
+        setPerso?.(
+          perso?.map((item: IpersonalQuestionsdata) => {
+            return item.id === questionID
+              ? {
+                  ...item,
+                  id: Math.random(),
+                  type: selectedQuestionType?.title,
+                  question: inputdata?.question,
+                  choices: choices,
+                  maxChoice: inputdata?.maxChoice,
+                  disqualify: checkBoxData?.disqualify,
+                  other: checkBoxData?.other,
+                }
+              : item;
+          })
+        );
+        setTimeout(() => {
+          setIsEditquestionMode?.(false);
+        }, 50);
+        // setselectedQuestionType(Object)
+      }
+    } else {
+      setError("Please select question type and other fields");
+    }
+  };
+
+  const handleDeleteQesution = () => {
+    if (!isEditquestionMode) {
+      setIsAddquestionMode?.(false);
+    } else {
+      // setIsEditquestionMode?.(false)
+      const findid = perso?.filter((item: any) => {
+        return item.id !== questionID;
+      });
+      setPerso?.(findid);
+      setQuestionID?.(0);
+    }
   };
 
   return (
@@ -176,9 +286,17 @@ const PersonalInformationForm = () => {
 
             {isAddquestionMode ? (
               <AddQuestion
-                setIsAddquestionMode={setIsAddquestionMode}
-                setPerso={setPerso}
-                perso={perso}
+              choices={choices}
+              error={error}
+              checkBoxData={checkBoxData}
+              handleSelectChange={handleSelectChange}
+              handleChoiceChange={handleChoiceChange}
+              handleAddChoice={handleAddChoice}
+              handleRemoveChoice={handleRemoveChoice}
+              handleInputs={handleInputs}
+              handleCheckboxes={handleCheckboxes}
+              handleSave={handleSave}
+              handleDeleteQesution={handleDeleteQesution}
               />
             ) : null}
 
@@ -194,12 +312,17 @@ const PersonalInformationForm = () => {
                   />
                   {questionID === item.id ? (
                     <AddQuestion
-                      isEditquestionMode={isEditquestionMode}
-                      setIsEditquestionMode={setIsEditquestionMode}
-                      questionID={questionID}
-                      setPerso={setPerso}
-                      perso={perso}
-                      setQuestionID={setQuestionID}
+                    choices={choices}
+                    error={error}
+                    checkBoxData={checkBoxData}
+                    handleSelectChange={handleSelectChange}
+                    handleChoiceChange={handleChoiceChange}
+                    handleAddChoice={handleAddChoice}
+                    handleRemoveChoice={handleRemoveChoice}
+                    handleInputs={handleInputs}
+                    handleCheckboxes={handleCheckboxes}
+                    handleSave={handleSave}
+                    handleDeleteQesution={handleDeleteQesution}
                     />
                   ) : null}
                 </div>
