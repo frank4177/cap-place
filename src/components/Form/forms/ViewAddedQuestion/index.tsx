@@ -3,9 +3,18 @@ import { edit } from "../../../Icons";
 
 interface viewProp{
     item?: IpersonalQuestionsdata
+    setIsEditquestionMode?: React.Dispatch<React.SetStateAction<boolean>>;
+    setQuestionID?: React.Dispatch<React.SetStateAction<number | undefined>>
+    questionID?: number
 }
 
-const ViewAddedQuestion = ({item}: viewProp) => {
+
+const ViewAddedQuestion = ({item, setIsEditquestionMode, setQuestionID, questionID}: viewProp) => {
+
+  const handleEdit = (param: number | undefined)=>{
+    setIsEditquestionMode?.(true)
+    setQuestionID?.(param)
+  }
   return (
     <>
       <div>
@@ -14,7 +23,7 @@ const ViewAddedQuestion = ({item}: viewProp) => {
           <p className="text-[14px] font-bold">
             {item?.question}
           </p>
-          <img src={edit} alt="edit" className="w-4 h-4 cursor-pointer" />
+          {questionID !== item?.id ? <img src={edit} alt="edit" className="w-4 h-4 cursor-pointer" onClick={()=> handleEdit(item?.id)}/> : null}
         </div>
         <hr />
       </div>

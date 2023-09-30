@@ -21,7 +21,7 @@ const Switch = ({item,handleChange} : checkboxProp) => {
     <>
       <div className="flex flex-row items-center gap-3">
         <label className={styles.switch}>
-          <input name={item?.name} type="checkbox" onChange={(e)=> onChange(e)}/>
+          <input name={item?.name} type="checkbox" onChange={(e)=> onChange(e)} required/>
           <span className={`${styles.slider} ${styles.round}`}></span>
         </label>
         <span className="text-[12px]">{isShow ? "Show": "Hide"}</span>

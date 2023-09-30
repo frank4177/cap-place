@@ -52,11 +52,12 @@ export type UserInformation = {
 };
 
 export interface IpersonalQuestionsdata {
-  id?: string;
+  id?: number;
   type?: string;
   question?: string;
   maxChoice?: number;
   disqualify?: boolean;
   other?: boolean;
+  choices?: string[]
   [key: string]: any;
 }

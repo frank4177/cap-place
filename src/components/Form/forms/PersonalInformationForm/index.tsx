@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import InputField from "../../formElement/InputField";
 import AddQuestion from "../AddQuestionForm";
 import { FormWrapper } from "../../../Layout/FromWrapper";
@@ -8,13 +8,13 @@ import CheckBox from "../../formElement/checkBox";
 import Switch from "../../formElement/Switch";
 import { IpersonalQuestionsdata, UserInformation } from "../../../../types";
 import ViewAddedQuestion from "../ViewAddedQuestion";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../../services/redux/store";
-
 
 const PersonalInformationForm = () => {
-  const personalQtn = useSelector((state: RootState) => state?.apiJson?.value)
+  // const personalQtn = useSelector((state: RootState) => state?.apiJson?.value);
   const [isAddquestionMode, setIsAddquestionMode] = useState<boolean>(false);
+  const [isEditquestionMode, setIsEditquestionMode] = useState<boolean>(false);
+  const [perso, setPerso] = useState<undefined | IpersonalQuestionsdata[]>([]);
+  const [questionID, setQuestionID] = useState<number>();
   const [personalInformationData, setPersonalInformationData] =
     useState<UserInformation>({
       firstName: "",
@@ -56,9 +56,29 @@ const PersonalInformationForm = () => {
         },
       ],
     });
-console.log(personalInformationData)
- 
 
+  console.log(personalInformationData);
+
+  // // GET INFO FROM SESSION STORAGE
+  // useEffect(() => {
+  //   const handleStorage = (e: any) => {
+  //     if (e?.type === "sessionStorageUpdated") {
+  //       const updatedData = sessionStorage.getItem("personalQuestion");
+  //       if (updatedData) {
+  //         const got = JSON.parse(updatedData);
+  //         setPersonalInfo(got);
+  //       } else {
+  //         console.log("to hell");
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("sessionStorageUpdated", handleStorage);
+  //   return () => {
+  //     window.removeEventListener("sessionStorageUpdated", handleStorage);
+  //   };
+  // }, []);
+
+  console.log(perso);
 
   // HANDLE INPUT FIELDS
   const handleChange = (
@@ -91,11 +111,6 @@ console.log(personalInformationData)
       }
     });
   };
-
-  // // HANDLE PERSONAL QUESTION
-  //   const handlePersonalQuestion = () => {
-
-  //   };
 
   return (
     <>
@@ -160,12 +175,34 @@ console.log(personalInformationData)
             ) : null}
 
             {isAddquestionMode ? (
-              <AddQuestion setIsAddquestionMode={setIsAddquestionMode} />
+              <AddQuestion
+                setIsAddquestionMode={setIsAddquestionMode}
+                setPerso={setPerso}
+                perso={perso}
+              />
             ) : null}
 
             <div className="flex flex-col">
-              {personalQtn?.map((item: IpersonalQuestionsdata, index: number) => (
-                <ViewAddedQuestion item={item} key={index}/>
+              {perso?.map((item: IpersonalQuestionsdata, index: number) => (
+                <div key={index}>
+                  <ViewAddedQuestion
+                    item={item}
+                    key={index}
+                    setIsEditquestionMode={setIsEditquestionMode}
+                    setQuestionID={setQuestionID}
+                    questionID={questionID}
+                  />
+                  {questionID === item.id ? (
+                    <AddQuestion
+                      isEditquestionMode={isEditquestionMode}
+                      setIsEditquestionMode={setIsEditquestionMode}
+                      questionID={questionID}
+                      setPerso={setPerso}
+                      perso={perso}
+                      setQuestionID={setQuestionID}
+                    />
+                  ) : null}
+                </div>
               ))}
             </div>
           </FormWrapper>

@@ -1,17 +1,14 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import Select from "../../formElement/Select";
-import {
-  IpersonalQuestionsdata,
-  selectOptionType,
-} from "../../../../types";
+import { IpersonalQuestionsdata, selectOptionType } from "../../../../types";
 import { FormWrapper } from "../../../Layout/FromWrapper";
 import InputField from "../../formElement/InputField";
 import { bar, close, plus } from "../../../Icons";
 import CheckBox from "../../formElement/checkBox";
 import Button from "../../../Button";
-import { unique_id } from "../../../../utils/uuid";
-import { useDispatch } from "react-redux";
-import { personalQtnStore } from "../../../../services/redux/features/apiSlice";
+// import { unique_id } from "../../../../utils/uuid";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "../../../../services/redux/store";
 
 const selectOPtionData: selectOptionType[] = [
   { id: "1", title: "Paragraph" },
@@ -26,11 +23,27 @@ const selectOPtionData: selectOptionType[] = [
 ];
 interface questionProp {
   setIsAddquestionMode?: React.Dispatch<React.SetStateAction<boolean>>;
+  questionID?: number | undefined;
+  setIsEditquestionMode?: React.Dispatch<React.SetStateAction<boolean>>;
+  isEditquestionMode?: boolean;
+  setPerso?: React.Dispatch<
+    React.SetStateAction<IpersonalQuestionsdata[] | undefined>
+  >;
+  perso?: IpersonalQuestionsdata[] | undefined;
+  setQuestionID?: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
-  const dispatch = useDispatch();
-
+const AddQuestion = ({
+  setIsAddquestionMode,
+  isEditquestionMode,
+  setIsEditquestionMode,
+  questionID,
+  setPerso,
+  perso,
+  setQuestionID,
+}: questionProp) => {
+  // const dispatch = useDispatch();
+  // const personalQtn = useSelector((state: RootState) => state?.apiJson?.value);
   const [choices, setChoices] = useState([""]);
   const [error, setError] = useState<string>("");
   const [selectedQuestionType, setselectedQuestionType] =
@@ -63,7 +76,6 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
     setChoices(list);
   };
 
-
   // HANDLE ADD CHOICES
   const handleAddChoice = () => {
     setChoices((current) => [...current, ""]);
@@ -71,6 +83,7 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
 
   // HANDLE REMOVE CHOICE
   const handleRemoveChoice = (index: number) => {
+    console.log(index);
     const list = [...choices];
     list.splice(index, 1);
     setChoices(list);
@@ -87,39 +100,98 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
   // HANDLE CHANGE FOR CHECKBOXES
   const handleCheckboxes = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-  
+    console.log(name);
     const dat = { ...checkBoxData };
     dat[name] = checked;
     setCheckBoxData(dat);
   };
 
   // HANDLE SAVE DATA
-  const handleSave = () => {
-    if (selectOPtionData) {
-      dispatch(personalQtnStore({
-        id: unique_id,
-        type: selectedQuestionType?.title,
-        question: inputdata?.question,
-        choices: choices,
-        maxChoice: inputdata?.maxChoice,
-        disqualify: checkBoxData?.disqualify,
-        other: checkBoxData?.other,
-      }));
-       setTimeout(() => {
-        setIsAddquestionMode?.(false);
-      }, 50);
-    }else{
-      setError("please select a question")
-    }
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+    // if (!isEditquestionMode) {
+    //   dispatch(personalQtnStore({
+    //     id: unique_id,
+    //     type: selectedQuestionType?.title,
+    //     question: inputdata?.question,
+    //     choices: choices,
+    //     maxChoice: inputdata?.maxChoice,
+    //     disqualify: checkBoxData?.disqualify,
+    //     other: checkBoxData?.other,
+    //   }));
+    //    setTimeout(() => {
+    //     setIsAddquestionMode?.(false);
+    //   }, 50);
+    // }else{
+    //   // setError("please select a question")
+    //   // const edit = personalQtn.map((item)=> item.id === questionID ? {...item: })
+    // }
+    e.preventDefault();
 
-    
+    if (selectedQuestionType) {
+      if (!isEditquestionMode) {
+        const lo = (current: any) => [
+          ...current,
+          {
+            id: Math.random(),
+            type: selectedQuestionType?.title,
+            question: inputdata?.question,
+            choices: choices,
+            maxChoice: inputdata?.maxChoice,
+            disqualify: checkBoxData?.disqualify,
+            other: checkBoxData?.other,
+          },
+        ];
+
+        setTimeout(() => {
+          setIsAddquestionMode?.(false);
+        }, 50);
+
+        setPerso?.(lo);
+      } else {
+        // setError("please select a question")
+        setPerso?.(
+          perso?.map((item: IpersonalQuestionsdata) => {
+            return item.id === questionID
+              ? {
+                  ...item,
+                  id: Math.random(),
+                  type: selectedQuestionType?.title,
+                  question: inputdata?.question,
+                  choices: choices,
+                  maxChoice: inputdata?.maxChoice,
+                  disqualify: checkBoxData?.disqualify,
+                  other: checkBoxData?.other,
+                }
+              : item;
+          })
+        );
+        setTimeout(() => {
+          setIsEditquestionMode?.(false);
+        }, 50);
+        // setselectedQuestionType(Object)
+      }
+    } else {
+      setError("Please select question type and other fields");
+    }
   };
 
+  const handleDeleteQesution = () => {
+    if (!isEditquestionMode) {
+      setIsAddquestionMode?.(false);
+    } else {
+      // setIsEditquestionMode?.(false)
+      const findid = perso?.filter((item: any) => {
+        return item.id !== questionID;
+      });
+      setPerso?.(findid);
+      setQuestionID?.(0);
+    }
+  };
 
   return (
     <>
       <FormWrapper title="Questions">
-        <div className="flex flex-col gap-5">
+        <form className="flex flex-col gap-5" onSubmit={(e) => handleSave(e)}>
           {/* SELECT QUESTION TYPE */}
           <Select
             options={selectOPtionData}
@@ -222,7 +294,7 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
           <div className="flex flex-row justify-between items-center">
             <div
               className="flex flex-row items-center gap-3 mt-3 cursor-pointer"
-              onClick={() => setIsAddquestionMode?.(false)}
+              onClick={() => handleDeleteQesution()}
             >
               <img
                 src={close}
@@ -235,12 +307,12 @@ const AddQuestion = ({ setIsAddquestionMode }: questionProp) => {
             </div>
 
             {/* SAVE */}
-            <Button handleClick={handleSave} />
+            <Button/>
           </div>
           {!selectedQuestionType ? (
-            <span className="text-pink-600">{error}</span>
+            <span className="text-pink-600 text-[12px]">{error}</span>
           ) : null}
-        </div>
+        </form>
       </FormWrapper>
     </>
   );

@@ -35,12 +35,12 @@ const FileUpload = () => {
             alt="upload"
             className="object-contain w-full h-[130px]"
           />
-          <div className="flex flex-row items-center gap-3 mt-3">
+          <div className="flex flex-row items-center gap-3 mt-3 cursor-pointer" onClick={()=> handleDelete()}>
             <img
               src={close}
               alt="close icon"
-              className="w-5 h-5 cursor-pointer"
-              onClick={()=> handleDelete()}
+              className="w-5 h-5"
+              
             />
             <p className="text-[11px] font-bold text-[#A80000]">
               Delete & re-upload
@@ -55,8 +55,8 @@ const FileUpload = () => {
             className="hidden"
             onChange={(e) => handleImageChange(e)}
           />
-          <label htmlFor="file-upload">
-            <div className="border-[1px] p-3 rounded-[5px] border-black border-dotted h-[130px] max-w-[300px] w-full flex flex-col justify-center items-center gap-1 cursor-pointer">
+          <label htmlFor="file-upload" className="flex flex-row justify-center">
+            <div className="border-[1px] p-3 rounded-[5px] border-black border-dotted h-[140px] max-w-[350px] w-full flex flex-col justify-center items-center gap-1 cursor-pointer">
               <img src={upload} alt="upload" className="h-5" />
               <p className="text-[13px] text-center">Upload cover image</p>
               <p className="text-[#979797] text-[11px] text-center">
