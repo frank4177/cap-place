@@ -160,15 +160,13 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
       } else {
         // ELSE IF IN EDIT MODE EDIT
         const data = { ...personalInformationData };
-        const id = Math.random()
+        // const id = Math.random()
 
        const lo = personalInformationData?.personalQuestions?.map(
           (item: IpersonalQuestionsdata) => {
             return item.id === questionID
               ? {
                   ...item,
-                  id: `${id}`,
-                  type: selectedQuestionType?.title,
                   question: inputdata?.question,
                   choices: choices,
                   maxChoice: inputdata?.maxChoice,
@@ -186,6 +184,7 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
         // Delay and hide form
         setTimeout(() => {
           setIsEditquestionMode?.(false);
+          setQuestionID("")
         }, 50);
       }
     } else {
@@ -277,6 +276,7 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
               <AddQuestion
                 choices={choices}
                 selectedQuestionType={selectedQuestionType}
+                isEditquestionMode={isEditquestionMode}
                 error={error}
                 checkBoxData={checkBoxData}
                 handleSelectChange={handleSelectChange}
@@ -315,6 +315,7 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
                         handleCheckboxes={handleCheckboxes}
                         handleSave={handleSave}
                         handleDeleteQesution={handleDeleteQesution}
+                        isEditquestionMode={isEditquestionMode}
                       />
                     ) : null}
                   </div>

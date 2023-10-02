@@ -23,22 +23,26 @@ const selectOPtionData: selectOptionType[] = [
 ];
 
 interface questionProp {
-
+  isEditquestionMode?: boolean;
   choices?: string[];
   error?: string;
-  selectedQuestionType?: selectOptionType | undefined
-  checkBoxData?: IpersonalQuestionsdata
-  handleSelectChange?: (param: selectOptionType) => void
-  handleChoiceChange?: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void
-  handleAddChoice?: () => void
-  handleRemoveChoice?: (index: number) => void
-  handleInputs?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleCheckboxes?:  (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleSave?: (e: React.FormEvent<HTMLFormElement>) => void
-  handleDeleteQesution?: () => void
+  selectedQuestionType?: selectOptionType | undefined;
+  checkBoxData?: IpersonalQuestionsdata;
+  handleSelectChange?: (param: selectOptionType) => void;
+  handleChoiceChange?: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => void;
+  handleAddChoice?: () => void;
+  handleRemoveChoice?: (index: number) => void;
+  handleInputs?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCheckboxes?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSave?: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleDeleteQesution?: () => void;
 }
 
 const AddQuestion = ({
+  isEditquestionMode,
   choices,
   error,
   selectedQuestionType,
@@ -50,20 +54,21 @@ const AddQuestion = ({
   handleInputs,
   handleCheckboxes,
   handleSave,
-  handleDeleteQesution
+  handleDeleteQesution,
 }: questionProp) => {
-
   return (
     <>
       <FormWrapper title="Questions">
         <form className="flex flex-col gap-5" onSubmit={(e) => handleSave?.(e)}>
           {/* SELECT QUESTION TYPE */}
-          <Select
-            options={selectOPtionData}
-            handleChange={handleSelectChange}
-            placeHolder="Select"
-            title="Type"
-          />
+          {!isEditquestionMode ? (
+            <Select
+              options={selectOPtionData}
+              handleChange={handleSelectChange}
+              placeHolder="Select"
+              title="Type"
+            />
+          ) : null}
 
           {/* QUESTION BOX */}
           <InputField
@@ -143,6 +148,33 @@ const AddQuestion = ({
             </div>
           ) : null}
 
+          {/* VIDEO */}
+          {selectedQuestionType?.title === "Video question" ?<div className="space-y-2">
+            <textarea
+              name=""
+              id=""
+              className="border-[1px] border-black w-full h-[80px] px-2"
+              placeholder="Please talk about your achievements, goals and what you worked on as the latest project."
+            />
+
+            <div className="flex flex-row gap-2">
+              <input
+                type="text"
+                className="w-full border-[1px] border-black px-2 text-[13px]"
+                placeholder="Max duration of video"
+              />
+
+              <select
+                name=""
+                id=""
+                className="w-full border-[1px] border-black h-[35px] px-2  placeholder:text-[12px]"
+              >
+                <option value="" className="text-gray-200 text-[12px] hidden">in (sec/min)</option>
+                <option value="">2 min</option>
+              </select>
+            </div>
+          </div> : null}
+
           {/* CHECKBOX DISQUALIFY */}
           {selectedQuestionType?.title === "Yes/No" ? (
             <div className="mt-3">
@@ -172,7 +204,7 @@ const AddQuestion = ({
             </div>
 
             {/* SAVE */}
-            <Button/>
+            <Button />
           </div>
           {!selectedQuestionType ? (
             <span className="text-pink-600 text-[12px]">{error}</span>

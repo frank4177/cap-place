@@ -235,6 +235,7 @@ const handleDeleteQesution = () => {
         {isAddquestionMode ? (
           <AddQuestion
           choices={choices}
+          isEditquestionMode={isEditquestionMode}
           selectedQuestionType={selectedQuestionType}
           error={error}
           checkBoxData={checkBoxData}
@@ -262,6 +263,7 @@ const handleDeleteQesution = () => {
               {questionID === item.id ? (
                 <AddQuestion
                 choices={choices}
+                isEditquestionMode={isEditquestionMode}
                 selectedQuestionType={selectedQuestionType}
                 error={error}
                 checkBoxData={checkBoxData}
