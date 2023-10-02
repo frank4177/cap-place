@@ -16,40 +16,41 @@ import {
 const ApplicationPage = () => {
   const { sendRequest } = useSubmitApplication();
 
-  const [image, setImage] = useState<string | undefined>()
+  const [image, setImage] = useState<string | undefined>();
 
-  const [personalInformationData, setPersonalInformationData] = useState<UserInformation>({
-    firstName: "",
-    lastName: "",
-    emailId: "",
-    phoneNumber: {
-      internalUse: false,
-      show: false,
-    },
-    nationality: {
-      internalUse: false,
-      show: false,
-    },
-    currentResidence: {
-      internalUse: false,
-      show: false,
-    },
-    idNumber: {
-      internalUse: false,
-      show: false,
-    },
-    dateOfBirth: {
-      internalUse: false,
-      show: false,
-    },
-    gender: {
-      internalUse: false,
-      show: false,
-    },
-    personalQuestions: [],
-  });
+  const [personalInformationData, setPersonalInformationData] =
+    useState<UserInformation>({
+      firstName: "",
+      lastName: "",
+      emailId: "",
+      phoneNumber: {
+        internalUse: false,
+        show: false,
+      },
+      nationality: {
+        internalUse: false,
+        show: false,
+      },
+      currentResidence: {
+        internalUse: false,
+        show: false,
+      },
+      idNumber: {
+        internalUse: false,
+        show: false,
+      },
+      dateOfBirth: {
+        internalUse: false,
+        show: false,
+      },
+      gender: {
+        internalUse: false,
+        show: false,
+      },
+      personalQuestions: [],
+    });
 
-  // 
+  //
   const [profile, setprofile] = useState<ProfileInformation>({
     education: {
       mandatory: false,
@@ -66,9 +67,7 @@ const ApplicationPage = () => {
     profileQuestions: [],
   });
 
-  const [customQuestions, ] = useState<CustomQuestions[]>([]);
-
-
+  const [customQuestions] = useState<CustomQuestions[]>([]);
 
   const handleSubmitForm = () => {
     sendRequest({
@@ -95,7 +94,7 @@ const ApplicationPage = () => {
           customisedQuestions: customQuestions,
         },
       },
-    })
+    });
   };
 
   return (
@@ -104,7 +103,10 @@ const ApplicationPage = () => {
         <div>
           <div className="flex flex-col justify-center h-[220px]">
             <StageTracker />
-            <div className="flex flex-row gap-1 pl-6 mt-6 items-center">
+          </div>
+
+          {/* Plea note */}
+          <div className="flex flex-row gap-1 pl-6 mt-6 items-center">
             <h1 className="font-bold text-[20px]">Link to the second task: {"--->"}</h1>
             <a className="text-green-600 font-bold text-[20px]" href="https://velvety-dasik-7c639a.netlify.app">Link</a>
             </div>
@@ -113,17 +115,17 @@ const ApplicationPage = () => {
             <h1 className="font-bold text-[20px]">Second task repo: {"--->"}</h1>
             <a className="text-green-600 font-bold text-[20px]" href="https://github.com/frank4177/cap-place-task2">Link</a>
             </div>
-           
-          </div>
+
+
           <div className="flex flex-col gap-20 px-10 py-[100px]">
-            <UploadCoverImageForm image={image} setImage={setImage}/>
+            <UploadCoverImageForm image={image} setImage={setImage} />
             <PersonalInformationForm
               personalInformationData={personalInformationData}
               setPersonalInformationData={setPersonalInformationData}
             />
-            <ProfileForm profile={profile} setprofile={setprofile}/>
+            <ProfileForm profile={profile} setprofile={setprofile} />
             <div className="ml-[20%]">
-              <Button title="Submit" handleClick={handleSubmitForm}/>
+              <Button title="Submit" handleClick={handleSubmitForm} />
             </div>
           </div>
         </div>
