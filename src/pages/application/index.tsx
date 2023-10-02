@@ -104,6 +104,16 @@ const ApplicationPage = () => {
         <div>
           <div className="flex flex-col justify-center h-[220px]">
             <StageTracker />
+            <div className="flex flex-row gap-1 pl-6 mt-6 items-center">
+            <h1 className="font-bold text-[20px]">Link to the second task: {"--->"}</h1>
+            <a className="text-green-600 font-bold text-[20px]" href="https://velvety-dasik-7c639a.netlify.app">Link</a>
+            </div>
+
+            <div className="flex flex-row gap-1 pl-6 mt-6 items-center">
+            <h1 className="font-bold text-[20px]">Second task repo: {"--->"}</h1>
+            <a className="text-green-600 font-bold text-[20px]" href="https://github.com/frank4177/cap-place-task2">Link</a>
+            </div>
+           
           </div>
           <div className="flex flex-col gap-20 px-10 py-[100px]">
             <UploadCoverImageForm image={image} setImage={setImage}/>
