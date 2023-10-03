@@ -160,7 +160,6 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
       } else {
         // ELSE IF IN EDIT MODE EDIT
         const data = { ...personalInformationData };
-        // const id = Math.random()
 
        const lo = personalInformationData?.personalQuestions?.map(
           (item: IpersonalQuestionsdata) => {
@@ -206,7 +205,11 @@ const PersonalInformationForm = ({personalInformationData, setPersonalInformatio
       );
       data["personalQuestions"] = deleteInfo;
       setPersonalInformationData?.(data);
-      setQuestionID?.("");
+
+      setTimeout(() => {
+        setIsEditquestionMode?.(false);
+        setQuestionID("")
+      }, 50);
     }
   };
 

@@ -71,13 +71,13 @@ export type ProfileInformation = {
 };
 
 export type CustomQuestions ={
-    id: string;
-    type: string;
-    question: string;
-    choices: string[];
-    maxChoice: number;
-    disqualify: boolean;
-    other: boolean;
+    id?: string;
+    type?: string;
+    question?: string;
+    choices?: string[];
+    maxChoice?: number;
+    disqualify?: boolean;
+    other?: boolean;
   
 }
 
@@ -89,7 +89,7 @@ export type ApplicationForm = {
       coverImage: string | undefined;
       personalInformation: UserInformation;
       profile: ProfileInformation;
-      customisedQuestions:CustomQuestions[] ;
+      customisedQuestions?:CustomQuestions[] ;
     };
   };
 };

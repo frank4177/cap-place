@@ -171,6 +171,7 @@ const ProfileForm = ({profile, setprofile} :props) => {
       // Delay and hide form
       setTimeout(() => {
         setIsEditquestionMode?.(false);
+        setQuestionID("")
       }, 50);
     }
   } else {
@@ -192,7 +193,10 @@ const handleDeleteQesution = () => {
     );
     data["profileQuestions"] = deleteInfo;
     setprofile?.(data);
-    setQuestionID?.("");
+    setTimeout(() => {
+      setIsEditquestionMode?.(false);
+      setQuestionID("")
+    }, 50);
   }
 };
 

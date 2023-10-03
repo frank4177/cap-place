@@ -11,6 +11,7 @@ import {
   ProfileInformation,
   UserInformation,
 } from "../../types";
+import AdditionalQuestionForm from "../../components/Form/forms/AdditionalQuestionForm";
 // import { useState } from "react";
 
 const ApplicationPage = () => {
@@ -67,7 +68,7 @@ const ApplicationPage = () => {
     profileQuestions: [],
   });
 
-  const [customQuestions] = useState<CustomQuestions[]>([]);
+  const [customQuestions, setCustomQuestions] = useState<CustomQuestions[] | undefined>([]);
 
   const handleSubmitForm = () => {
     sendRequest({
@@ -124,6 +125,7 @@ const ApplicationPage = () => {
               setPersonalInformationData={setPersonalInformationData}
             />
             <ProfileForm profile={profile} setprofile={setprofile} />
+            <AdditionalQuestionForm customQuestions={customQuestions} setCustomQuestions={setCustomQuestions}/>
             <div className="ml-[20%]">
               <Button title="Submit" handleClick={handleSubmitForm} />
             </div>
